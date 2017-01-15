@@ -1,2 +1,2 @@
 # svm_gui
-A Java application that can perform SVM and K-mean calculations on data via a GUI.
+A Java application that can create a support vector machine (SVM) on data via a GUI. SVM is implemented via LIBSVM (3.22)
