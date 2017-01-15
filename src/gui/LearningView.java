@@ -247,7 +247,8 @@ public class LearningView extends JFrame {
         JPanel panel1 = new JPanel();
         panel1.setLayout(new BoxLayout(panel1, BoxLayout.Y_AXIS));
         
-        JTextArea restrictions = new JTextArea("[0] -- C-SVC\n"
+        JTextArea restrictions = new JTextArea("Restricted to:\n"
+        		+"[0] -- C-SVC\n"
         		+"[1] -- nu-SVC\n"
         		+"[2] -- one-class SVM\n"
         		+"[3] -- epsilon-SVR\n"
@@ -337,10 +338,13 @@ public class LearningView extends JFrame {
 	 * Resets all the setting fields to their defaults.
 	 */
 	public void resetOptions() {
+		// Set default values for non-empty fields
+		//TODO: Make variables to store these values if needed again.
 		svmType.setSelectedIndex(0);
 		kernelType.setSelectedIndex(2);
         shrinking.setSelectedIndex(1);
         probabilityEstimates.setSelectedIndex(0);
+        
         degree.setText("3");
         coef0.setText("0");
         cost.setText("1");
@@ -349,6 +353,9 @@ public class LearningView extends JFrame {
         epsilonTolerance.setText("0.001");
         weight.setText("1");
         cacheSize.setText("100");
+        
+        gamma.setText("");
+        crossValidation.setText("");
         return;
 	}
 	
@@ -429,7 +436,7 @@ public class LearningView extends JFrame {
         		+"shrinking : whether to use the shrinking heuristics, 0 or 1 (default 1)\n"
         		+"probability_estimates : whether to train a SVC or SVR model for probability estimates, 0 or 1 (default 0)\n"
         		+"weight : set the parameter C of class i to weight*C, for C-SVC (default 1)\n"
-        		+": n-fold cross validation mode (leave blank for no cross validation)\n");
+        		+"n-fold cross validation mode (leave blank for no cross validation)\n");
         helpText.setCaretPosition(0);
         //Adds the scrollpane implementing the textarea.
         JScrollPane helpDisplay = new JScrollPane(helpText);
@@ -437,6 +444,6 @@ public class LearningView extends JFrame {
         /*Creates dialogue box with given message, title of "error" and an 
          * error icon. */
         JOptionPane.showMessageDialog(this, helpDisplay, "Help", 
-                JOptionPane.QUESTION_MESSAGE);
+                JOptionPane.PLAIN_MESSAGE);
     }
 }
