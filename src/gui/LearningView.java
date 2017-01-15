@@ -1,6 +1,10 @@
 package gui;
 
 import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+
+import javafx.scene.layout.Border;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 
@@ -48,7 +52,7 @@ public class LearningView extends JFrame {
         
         //Creates container for interface setting title, size and close action.
         setTitle("svm_gui");
-        setBounds(400,200,700,450);
+        setBounds(400, 200, 900, 550);
         setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         Container container = getContentPane();
@@ -67,17 +71,13 @@ public class LearningView extends JFrame {
 	private void addComponents(Container container) {
 		///Creates a new JPanel with vertical BoxLayout.
         JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         
         //Adds all interface components to the JPanel.
 		addFileSelector(panel);
 		addCombinationSettingHelp(panel);
-		addModes(panel);
+		addDialog(panel);
 		
-		// Implement and add dialog (output box)
-		dialog = new JTextArea(15,50);
-		panel.add(dialog);
-        
         //Adds the highest level JPanel to the container.
         container.add(panel,"North");
 	}
@@ -88,21 +88,30 @@ public class LearningView extends JFrame {
 	 * @param parent JPanel to contain the JPanel constructed.
 	 */
 	private void addFileSelector(JPanel parent) {
-		//Creates a new JPanel for labels with a 2 by 2 grid.
+		//Creates a new JPanel for labels with a 2 by 1 grid.
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(2,2));
+        panel.setLayout(new GridLayout(2,1));
+        
+        // Two sub panels using FlowLayout will be used for scaling.
+        JPanel panel1 = new JPanel();
+        panel1.setLayout(new FlowLayout(FlowLayout.LEADING));
+        JPanel panel2 = new JPanel();
+        panel2.setLayout(new FlowLayout(FlowLayout.LEADING));
         
         // Implementing data and model TextFields
         dataFilepath = new JTextField(50);
         modelFilepath = new JTextField(50);
         
-        panel.add(new JLabel("Data file to use:"));
-        panel.add(dataFilepath);
-        
-        panel.add(new JLabel("Model file to use:"));
-        panel.add(modelFilepath);
-        
         //TODO: Use an actual file selector.
+        panel1.add(new JLabel("Data file to use:"));
+        panel1.add(dataFilepath);
+        
+        panel2.add(new JLabel("Model file to use:"));
+        panel2.add(modelFilepath);
+        
+        // Combining the two sub panels into the main panel.
+        panel.add(panel1);
+        panel.add(panel2);
         
         parent.add(panel);
 	}
@@ -115,7 +124,7 @@ public class LearningView extends JFrame {
 	 */
 	private void addCombinationSettingHelp(JPanel parent) {
 		JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(2,1));
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		
         addOptions(panel);
         addRestrictionsHelp(panel);
@@ -132,9 +141,23 @@ public class LearningView extends JFrame {
 		/*
 		 * Creates a new JPanel for labels with a 4 by 8 grid, effectively only 
 		 * 4 by 4 as every option will have a textfield or a dropbox next to it.
+		 * 
+		 * This is done through a BoxLayout with the four rows made in separate 
+		 * panels.
 		 */
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(4,8));
+        //panel.setLayout(new GridLayout(4,8));
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        
+        //Making the other four need panels using a FlowLayout
+        JPanel panel1 = new JPanel();
+        panel1.setLayout(new FlowLayout(FlowLayout.LEADING));
+        JPanel panel2 = new JPanel();
+        panel2.setLayout(new FlowLayout(FlowLayout.LEADING));        
+        JPanel panel3 = new JPanel();
+        panel3.setLayout(new FlowLayout(FlowLayout.LEADING));
+        JPanel panel4 = new JPanel();
+        panel4.setLayout(new FlowLayout(FlowLayout.LEADING));
         
         // Setting up drop downboxes
         svmType = new JComboBox<String>(svmTypes);
@@ -145,58 +168,67 @@ public class LearningView extends JFrame {
         //TODO: Put tooltips for each textfield.
         //TODO: Grey out unrelated fields.
         
-        panel.add(new JLabel("SVM type:"));
-        panel.add(svmType);
+        // First row
+        panel1.add(new JLabel("SVM type:"));
+        panel1.add(svmType);
         
-        panel.add(new JLabel("Kernel type:"));
-        panel.add(kernelType);
+        panel1.add(new JLabel("Kernel type:"));
+        panel1.add(kernelType);
         
-        panel.add(new JLabel("Enable shrinking?"));
-        panel.add(shrinking);
-        
-        panel.add(new JLabel("Train for probability estimates?"));
-        panel.add(probabilityEstimates);
-        
-        panel.add(new JLabel("Degree in kernel function:"));
+        // Second row
+        panel2.add(new JLabel("Degree in kernel function:"));
         degree = new JTextField(3);
-        panel.add(degree);
+        panel2.add(degree);
         
-        panel.add(new JLabel("Gamma in kernel function:"));
-        gamma = new JTextField(8);
-        panel.add(gamma);
+        panel2.add(new JLabel("Gamma in kernel function:"));
+        gamma = new JTextField(5);
+        panel2.add(gamma);
         
-        panel.add(new JLabel("coef0 in kernel Function"));
-        coef0= new JTextField(8);
-        panel.add(coef0);
+        panel2.add(new JLabel("coef0 in kernel Function"));
+        coef0= new JTextField(5);
+        panel2.add(coef0);
         
-        panel.add(new JLabel("Cost (C) [0,3,4]:"));
+        panel2.add(new JLabel("Cost (C) [0,3,4]:"));
         cost = new JTextField(3);
-        panel.add(cost);
+        panel2.add(cost);
         
-        panel.add(new JLabel("nu [1,2,4]:"));
-        nu = new JTextField(8);
-        panel.add(nu);
+        // Third row
+        panel3.add(new JLabel("nu [1,2,4]:"));
+        nu = new JTextField(5);
+        panel3.add(nu);
         
-        panel.add(new JLabel("Epsilon in loss function [3]:"));
-        epsilonLoss = new JTextField(8);
-        panel.add(epsilonLoss);
+        panel3.add(new JLabel("Epsilon in loss function [3]:"));
+        epsilonLoss = new JTextField(5);
+        panel3.add(epsilonLoss);
         
-        panel.add(new JLabel("Epsilon termination tolerance:"));
-        epsilonTolerance = new JTextField(8);
-        panel.add(epsilonTolerance);
+        panel3.add(new JLabel("Epsilon termination tolerance:"));
+        epsilonTolerance = new JTextField(5);
+        panel3.add(epsilonTolerance);
         
-        panel.add(new JLabel("Weight (see help) [0]:"));
-        weight = new JTextField(8);
-        panel.add(weight);
+        panel3.add(new JLabel("Weight (see help) [0]:"));
+        weight = new JTextField(5);
+        panel3.add(weight);
         
-        panel.add(new JLabel("n-fold cross validation:"));
+        //Fourth row
+        panel4.add(new JLabel("Enable shrinking?"));
+        panel4.add(shrinking);
+        
+        panel4.add(new JLabel("Train for probability estimates?"));
+        panel4.add(probabilityEstimates);
+        
+        panel4.add(new JLabel("n-fold cross validation:"));
         crossValidation = new JTextField(3);
-        panel.add(crossValidation);
+        panel4.add(crossValidation);
         
-        panel.add(new JLabel("Cache memory in MB:"));
-        cacheSize = new JTextField(6);
-        panel.add(cacheSize);
+        panel4.add(new JLabel("Cache memory in MB:"));
+        cacheSize = new JTextField(4);
+        panel4.add(cacheSize);
 		
+        panel.add(panel1);
+        panel.add(panel2);
+        panel.add(panel3);
+        panel.add(panel4);
+        
         // Set all options to their defaults
         resetOptions();
         
@@ -210,18 +242,29 @@ public class LearningView extends JFrame {
 	 */
 	private void addRestrictionsHelp(JPanel parent) {
 		JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(1,2));
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER));
         
-        panel.add(new JLabel("[0] -- C-SVC\n"
+        JPanel panel1 = new JPanel();
+        panel1.setLayout(new BoxLayout(panel1, BoxLayout.Y_AXIS));
+        
+        JTextArea restrictions = new JTextArea("[0] -- C-SVC\n"
         		+"[1] -- nu-SVC\n"
         		+"[2] -- one-class SVM\n"
         		+"[3] -- epsilon-SVR\n"
-        		+"[4] -- nu-SVR\n"));
-
-        addResetHelp(panel);
+        		+"[4] -- nu-SVR\n");
+        restrictions.setEditable(false);
+        restrictions.setOpaque(false);
+        
+        //Building panel1 with restrictions text and the reset and help buttons.
+        panel.add(restrictions);
+        addResetHelp(panel1);
+        addModes(panel1);
+        
+        panel.add(panel1);
         
         parent.add(panel);
 	}
+	
 	
 	/**
 	 * Adds help and reset buttons.
@@ -230,7 +273,7 @@ public class LearningView extends JFrame {
 	 */
 	private void addResetHelp(JPanel parent) {
 		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(2,1));
+		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 		
 		// Label and add the help button
 		help = new JButton("Help");
@@ -251,7 +294,7 @@ public class LearningView extends JFrame {
 	 */
 	private void addModes(JPanel parent) {
 		JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(1,3));
+        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         
         // Implement buttons and set text
         scale = new JButton("Scale");
@@ -263,6 +306,31 @@ public class LearningView extends JFrame {
         panel.add(predict);
         
         parent.add(panel);
+	}
+	
+	/**
+	 * Adds the output dialog with scroll bars.
+	 * 
+	 * @param parent JPanel to contain the JPanel constructed.
+	 */
+	private void addDialog(JPanel parent) {
+		//Creates a new JPanel using default FlowLayout.
+		JPanel panel = new JPanel();
+		
+		// Implement and add dialog (output box)
+		dialog = new JTextArea(10, 70);
+		dialog.setEditable(false);
+				
+		/*Adds the scrollpanes to the textarea making scrollbars on horizontal 
+		 * and vertical axis. 
+		 * */
+		JScrollPane dialogScroll = new JScrollPane(dialog, 
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
+		        JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		        
+		panel.add(dialogScroll);
+		
+		parent.add(panel);
 	}
 	
 	/**
