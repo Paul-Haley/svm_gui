@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
 
-//import libsvm.*;
+import libsvm.svm_parameter;
 import svm.svm_train;
 
 /**
@@ -26,16 +26,18 @@ public class LearningModel {
 	 * Constructor for model component of the svm_gui.
 	 */
 	public LearningModel() {
+		
 		return;
-	}
-	
-	public int train() {
-		return 1;
 	}
 	
 	public int scale() {
 		
 		return 1;
+	}
+	
+	public void train(svm_parameter parameters) {
+		
+		return;
 	}
 	
 	public int predict() {

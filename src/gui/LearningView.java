@@ -1,19 +1,19 @@
 package gui;
 
 import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
 
-import javafx.scene.layout.Border;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.PrintStream;
 
+@SuppressWarnings("serial")
 public class LearningView extends JFrame {
 	
 	/*
 	 * Invariant:
-	 * 
+	 * Nothing is null
 	 */
 	
 	// The model of the Learning Manager.
@@ -370,6 +370,27 @@ public class LearningView extends JFrame {
 	}
 	
 	/**
+     * Allows for the SVM type selectors selection to trigger actions. Sets up 
+     * an 
+     * ActionListener with the passed in one.
+     * 
+     * @param p1 Given ActionListener for monitoring.
+     */
+    public void svmSelectorListener(ActionListener p1) {
+        svmType.addActionListener(p1);
+    }
+    
+    /**
+     * Allows for the kernel type selectors selection to trigger actions. Sets 
+     * up an ActionListener with the passed in one.
+     * 
+     * @param p1 ActionListener for monitoring.
+     */
+    public void kernelSelectorListener(ActionListener p1) {
+        kernelType.addActionListener(p1);
+    }
+	
+	/**
      * Allows for the help button to trigger actions. Sets up an ActionListener 
      * with the passed in one.
      * 
@@ -388,6 +409,25 @@ public class LearningView extends JFrame {
     public void resetListener(ActionListener p1) {
         reset.addActionListener(p1);
     }
+    /**
+     * Allows for the scale button to trigger actions. Sets up an 
+     * ActionListener with the passed in one.
+     * 
+     * @param p1 Given ActionListener for monitoring.
+     */
+    public void scaleListener(ActionListener p1) {
+        scale.addActionListener(p1);
+    }
+    
+    /**
+     * Allows for the train button to trigger actions. Sets up an 
+     * ActionListener with the passed in one.
+     * 
+     * @param p1 Given ActionListener for monitoring.
+     */
+    public void trainListener(ActionListener p1) {
+        train.addActionListener(p1);
+    }
     
     /**
      * Allows for the predict button to trigger actions. Sets up an 
@@ -396,7 +436,7 @@ public class LearningView extends JFrame {
      * @param p1 Given ActionListener for monitoring.
      */
     public void predictListener(ActionListener p1) {
-        reset.addActionListener(p1);
+        predict.addActionListener(p1);
     }
     	
 
@@ -466,5 +506,114 @@ public class LearningView extends JFrame {
          * error icon. */
         JOptionPane.showMessageDialog(this, helpDisplay, "Help", 
                 JOptionPane.PLAIN_MESSAGE);
+    }
+    
+    // Getters for JTextFields and JComboBoxes for parameter selection
+    // Allows access to the greying out of fields.
+    
+    public int getSvmType() {
+    	return svmType.getSelectedIndex();
+    }
+    
+    public int getKernelType() {
+    	return kernelType.getSelectedIndex();
+    }
+    
+    public int getDegree() throws NumberFormatException {
+    	return Integer.parseInt(degree.getText());
+    }
+    
+    public void greyDegree(boolean b) {
+    	degree.setEditable(!b);
+    }
+    
+    public double getGamma() throws NumberFormatException {
+    	return Double.parseDouble(gamma.getText());
+    }
+    
+    public void greyGamma(boolean b) {
+    	gamma.setEditable(!b);
+    }
+    
+    public double getCoef0() throws NumberFormatException {
+    	return Double.parseDouble(coef0.getText());
+    }
+    
+    public void greyCoef0(boolean b) {
+    	coef0.setEditable(!b);
+    }
+    
+    public double getCacheSize() throws NumberFormatException {
+    	return Double.parseDouble(cacheSize.getText());
+    }
+    
+    public double getEps() throws NumberFormatException {
+    	return Double.parseDouble(epsilonTolerance.getText());
+    }
+    
+    public void greyEps(boolean b) {
+    	epsilonTolerance.setEditable(!b);
+    }
+    
+    public double getCost() throws NumberFormatException {
+    	return Double.parseDouble(cost.getText());
+    }
+    
+    public void greyCost(boolean b) {
+    	cost.setEditable(!b);
+    }
+    
+    //TODO: nr_weight
+    public int getNrWeight() {
+    	return 0;
+    }
+    
+    //TODO:
+    public void greyNrWeight(boolean b) {
+    	return;
+    }
+    
+    //TODO: weight_label
+    public int[] getWeightLabel() throws NumberFormatException {
+    	return new int[0];
+    }
+    
+    //TODO:
+    public void greyWeightLabel(boolean b) {
+    	return;
+    }
+    
+    //TODO: implement proper version.
+    public double[] getWeight() throws NumberFormatException {
+    	//return Double.parseDouble(weight.getText());
+    	return new double[0];
+    }
+    
+    public void greyWeight(boolean b) {
+    	weight.setEditable(!b);
+    }
+    
+    public double getNu() throws NumberFormatException {
+    	return Double.parseDouble(nu.getText());
+    }
+    
+    public void greyNu(boolean b) {
+    	nu.setEditable(!b);
+    }
+    
+    public double getEpsilonLoss() throws NumberFormatException {
+    	return Double.parseDouble(epsilonLoss.getText());
+    }
+    
+    public void greyEpsilonLoss(boolean b) {
+    	epsilonLoss.setEditable(!b);
+    }
+    
+    public int getShrinking() {
+    	return shrinking.getSelectedIndex();
+    }
+    
+    public int getProbability() {
+    	return probabilityEstimates.getSelectedIndex();
     }
 }
