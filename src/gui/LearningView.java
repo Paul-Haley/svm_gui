@@ -2,8 +2,6 @@ package gui;
 
 import javax.swing.*;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.PrintStream;
@@ -508,8 +506,18 @@ public class LearningView extends JFrame {
                 JOptionPane.PLAIN_MESSAGE);
     }
     
-    // Getters for JTextFields and JComboBoxes for parameter selection
-    // Allows access to the greying out of fields.
+    /* 
+     * Getters for JTextFields and JComboBoxes for parameter selection. Allows 
+     * access to the greying out of fields where options don't all apply.
+     */
+    
+    public String getDataFilepath() {
+    	return dataFilepath.getText();
+    }
+    
+    public String getModelFilepath() {
+    	return modelFilepath.getText();
+    }
     
     public int getSvmType() {
     	return svmType.getSelectedIndex();
@@ -525,14 +533,28 @@ public class LearningView extends JFrame {
     
     public void greyDegree(boolean b) {
     	degree.setEditable(!b);
+    	Color color = b?Color.GRAY:Color.BLACK;
+    	degree.setForeground(color);
     }
     
+    /**
+     * Reads the gamma text field and returns the number entered or returns a 
+     * 
+     * @return The number given for gamma or -1 if the box is left blank.
+     * @throws NumberFormatException if the 'number given cannot be parsed
+     */
     public double getGamma() throws NumberFormatException {
-    	return Double.parseDouble(gamma.getText());
+    	if (gamma.getText().equals("")) {
+    		return -1.0;
+    	} else {
+    		return Double.parseDouble(gamma.getText());
+    	}
     }
     
     public void greyGamma(boolean b) {
     	gamma.setEditable(!b);
+    	Color color = b?Color.GRAY:Color.BLACK;
+    	gamma.setForeground(color);
     }
     
     public double getCoef0() throws NumberFormatException {
@@ -541,6 +563,8 @@ public class LearningView extends JFrame {
     
     public void greyCoef0(boolean b) {
     	coef0.setEditable(!b);
+    	Color color = b?Color.GRAY:Color.BLACK;
+    	coef0.setForeground(color);
     }
     
     public double getCacheSize() throws NumberFormatException {
@@ -553,6 +577,8 @@ public class LearningView extends JFrame {
     
     public void greyEps(boolean b) {
     	epsilonTolerance.setEditable(!b);
+    	Color color = b?Color.GRAY:Color.BLACK;
+    	epsilonTolerance.setForeground(color);
     }
     
     public double getCost() throws NumberFormatException {
@@ -561,6 +587,8 @@ public class LearningView extends JFrame {
     
     public void greyCost(boolean b) {
     	cost.setEditable(!b);
+    	Color color = b?Color.GRAY:Color.BLACK;
+    	cost.setForeground(color);
     }
     
     //TODO: nr_weight
@@ -591,6 +619,8 @@ public class LearningView extends JFrame {
     
     public void greyWeight(boolean b) {
     	weight.setEditable(!b);
+    	Color color = b?Color.GRAY:Color.BLACK;
+    	weight.setForeground(color);
     }
     
     public double getNu() throws NumberFormatException {
@@ -599,6 +629,8 @@ public class LearningView extends JFrame {
     
     public void greyNu(boolean b) {
     	nu.setEditable(!b);
+    	Color color = b?Color.GRAY:Color.BLACK;
+    	nu.setForeground(color);
     }
     
     public double getEpsilonLoss() throws NumberFormatException {
@@ -607,6 +639,16 @@ public class LearningView extends JFrame {
     
     public void greyEpsilonLoss(boolean b) {
     	epsilonLoss.setEditable(!b);
+    	Color color = b?Color.GRAY:Color.BLACK;
+    	epsilonLoss.setForeground(color);
+    }
+    
+    public int getCrossValidation() throws NumberFormatException {
+    	if (crossValidation.getText().equals("")) {
+    		return -1;
+    	} else {
+    		return Integer.parseInt(crossValidation.getText());
+    	}
     }
     
     public int getShrinking() {

@@ -181,6 +181,7 @@ public class LearningController {
     		parameter.eps = view.getEps();
     		parameter.C = view.getCost();
     		parameter.nr_weight = view.getNrWeight();
+    		//TODO: implement functionality and uncomment these lines.
     		//parameter.weight_label = view.getWeightLabel();
     		//parameter.weight = view.getWeight();
     		parameter.nu = view.getNu();
@@ -189,7 +190,8 @@ public class LearningController {
     		parameter.probability = view.getProbability();
     		
     		// Passing the parameter to the model
-    		model.train(parameter);
+    		model.train(parameter, view.getCrossValidation(), 
+    				view.getDataFilepath(), view.getModelFilepath());
     	}
     }
     

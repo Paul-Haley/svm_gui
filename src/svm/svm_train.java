@@ -18,7 +18,7 @@ public class svm_train {
 		public void print(String s) {}
 	};
 
-	private static void exit_with_help()
+	private static void exit_with_help() throws Exception
 	{
 		System.out.print(
 		 "Usage: svm_train [options] training_set_file [model_file]\n"
@@ -49,7 +49,7 @@ public class svm_train {
 		+"-v n : n-fold cross validation mode\n"
 		+"-q : quiet mode (no outputs)\n"
 		);
-		System.exit(1);
+		throw new Exception();
 	}
 
 	private void do_cross_validation()
@@ -90,7 +90,7 @@ public class svm_train {
 		}
 	}
 	
-	private void run(String argv[]) throws IOException
+	private void run(String argv[]) throws Exception
 	{
 		parse_command_line(argv);
 		read_problem();
@@ -99,7 +99,7 @@ public class svm_train {
 		if(error_msg != null)
 		{
 			System.err.print("ERROR: "+error_msg+"\n");
-			System.exit(1);
+			throw new Exception();
 		}
 
 		if(cross_validation != 0)
@@ -113,19 +113,26 @@ public class svm_train {
 		}
 	}
 
-	public static void main(String argv[]) throws IOException
+	/**
+	 * svm_train program, instructions can be found in exit_with_help()
+	 * 
+	 * @param argv command line arguments
+	 * @throws Exception This exception is to replace the System exit and 
+	 * 		present the program from exiting.
+	 */
+	public static void main(String argv[]) throws Exception
 	{
 		svm_train t = new svm_train();
 		t.run(argv);
 	}
 
-	private static double atof(String s)
+	private static double atof(String s) throws Exception
 	{
 		double d = Double.valueOf(s).doubleValue();
 		if (Double.isNaN(d) || Double.isInfinite(d))
 		{
 			System.err.print("NaN or Infinity in input\n");
-			System.exit(1);
+			throw new Exception();
 		}
 		return(d);
 	}
@@ -135,7 +142,7 @@ public class svm_train {
 		return Integer.parseInt(s);
 	}
 
-	private void parse_command_line(String argv[])
+	private void parse_command_line(String argv[]) throws Exception
 	{
 		int i;
 		svm_print_interface print_func = null;	// default printing to stdout
@@ -260,7 +267,7 @@ public class svm_train {
 
 	// read in a problem (in svmlight format)
 
-	private void read_problem() throws IOException
+	private void read_problem() throws Exception
 	{
 		BufferedReader fp = new BufferedReader(new FileReader(input_file_name));
 		Vector<Double> vy = new Vector<Double>();
@@ -305,12 +312,14 @@ public class svm_train {
 				if (prob.x[i][0].index != 0)
 				{
 					System.err.print("Wrong kernel matrix: first column must be 0:sample_serial_number\n");
-					System.exit(1);
+					fp.close();
+					throw new Exception();
 				}
 				if ((int)prob.x[i][0].value <= 0 || (int)prob.x[i][0].value > max_index)
 				{
 					System.err.print("Wrong input format: sample_serial_number out of range\n");
-					System.exit(1);
+					fp.close();
+					throw new Exception();
 				}
 			}
 
