@@ -17,15 +17,15 @@ public class LearningModel {
 	/*
 	 * Class invariant:
 	 * 
-	 * display != null &&
-	 * 
 	 * 
 	 */
 	
-	public PrintStream display;
+	//public TextAreaOutputStream display, fault;
 	
+	/**
+	 * Constructor for model component of the svm_gui.
+	 */
 	public LearningModel() {
-		System.setOut(display); // re-directs stdout for use in the View class.
 		return;
 	}
 	

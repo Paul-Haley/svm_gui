@@ -7,6 +7,7 @@ import javafx.scene.layout.Border;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.PrintStream;
 
 public class LearningView extends JFrame {
 	
@@ -318,11 +319,20 @@ public class LearningView extends JFrame {
 		//Creates a new JPanel using default FlowLayout.
 		JPanel panel = new JPanel();
 		
-		// Implement and add dialog (output box)
+		// Implement and add dialog (output box) that will print stdout.
 		dialog = new JTextArea(10, 70);
+		PrintStream output = new PrintStream(new TextAreaOutputStream(dialog));
+		System.setOut(output); // Redirecting stdout.
+		System.setErr(output); 
+		/*
+		 * TODO: do something about colour or make a way to make the output more
+		 * obviously an error
+		 */
 		dialog.setEditable(false);
+		
 				
-		/*Adds the scrollpanes to the textarea making scrollbars on horizontal 
+		/*
+		 * Adds the scrollpanes to the textarea making scrollbars on horizontal 
 		 * and vertical axis. 
 		 * */
 		JScrollPane dialogScroll = new JScrollPane(dialog, 
@@ -378,8 +388,19 @@ public class LearningView extends JFrame {
     public void resetListener(ActionListener p1) {
         reset.addActionListener(p1);
     }
-	
-	/**
+    
+    /**
+     * Allows for the predict button to trigger actions. Sets up an 
+     * ActionListener with the passed in one.
+     * 
+     * @param p1 Given ActionListener for monitoring.
+     */
+    public void predictListener(ActionListener p1) {
+        reset.addActionListener(p1);
+    }
+    	
+
+    /**
      * Generic error dialogue box to be used for all exceptions, faults or 
      * incorrect user inputs. This box appears with an error icon and displays 
      * the given message passed in a scrollable text area.

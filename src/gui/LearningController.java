@@ -18,6 +18,7 @@ public class LearningController {
 		
 		view.helpListener(new HelpButtonActionListener());
 		view.resetListener(new ResetButtonActionListener());
+		view.predictListener(new PredictButtonActionListener());
 	}
 
 	/**
@@ -42,6 +43,19 @@ public class LearningController {
     	 */
     	public void actionPerformed(ActionEvent e) {
     		view.resetOptions();
+    	}
+    }
+    
+    /**
+     * This class listens to the predict button.
+     */
+    private class PredictButtonActionListener implements ActionListener {
+    	/**
+    	 * Attempts to run the predict program after reading the user provided 
+    	 * settings.
+    	 */
+    	public void actionPerformed(ActionEvent e) {
+    		
     	}
     }
 }
