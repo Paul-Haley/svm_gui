@@ -41,6 +41,15 @@ public class LearningView extends JFrame {
     private JButton scale, train, predict, help, reset;
     private JCheckBox predictProbability;
     
+    /*
+     * Scale components.
+     */
+    private JTextField scaleParameterFilepath, scaleDataFilePath, xLower, 
+    		xUpper, yLower, yUpper;
+    private JButton resetScale;
+    private JCheckBox scaleSave, scaleLoad;
+    private JTabbedPane tabbedPane;
+    
     /**
      * Creates a new svm_gui window.
      * @param model Learning Model in the MVC architecture. 
@@ -74,7 +83,8 @@ public class LearningView extends JFrame {
         
         //Adds all interface components to the JPanel.
 		addFileSelector(panel);
-		addCombinationSettingHelp(panel);
+		//addCombinationSettingHelp(panel);
+		addScaleTrainTabs(panel);
 		addDialog(panel);
 		
         //Adds the highest level JPanel to the container.
@@ -124,20 +134,68 @@ public class LearningView extends JFrame {
         parent.add(panel);
 	}
 	
+	private void addScaleTrainTabs(JPanel parent) {
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridLayout(1, 1));
+		tabbedPane = new JTabbedPane();
+		tabbedPane.addTab("Train & Predict", addCombinationSettingHelp(panel));
+		tabbedPane.addTab("Scale Data", addScaleSettings(panel));
+		parent.add(tabbedPane);
+	}
+	
+	private JPanel addScaleSettings(JPanel parent) {
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		
+		//Sub panels
+		JPanel panel1 = new JPanel();
+		panel1.setLayout(new FlowLayout(FlowLayout.LEADING));
+		JPanel panel2 = new JPanel();
+		panel2.setLayout(new FlowLayout(FlowLayout.LEADING));
+		JPanel panel3 = new JPanel();
+		panel3.setLayout(new FlowLayout(FlowLayout.LEADING));
+		
+		panel1.add(new JLabel("x scaling lower limit:"));
+		panel1.add(xLower = new JTextField(3));
+		panel1.add(new JLabel("x scaling upper limit:"));
+		panel1.add(xUpper = new JTextField(3));
+		
+		panel2.add(new JLabel("y scaling lower limit:"));
+		panel2.add(yLower = new JTextField(3));
+		panel2.add(new JLabel("y scaling upper limit:"));
+		panel2.add(yUpper = new JTextField(3));
+		
+		panel3.add(scaleSave = new JCheckBox("Save scaling parameter?"));
+		scaleSave.setHorizontalTextPosition(SwingConstants.LEFT);
+		panel3.add(scaleLoad = new JCheckBox("Load scaling parameter?"));
+		scaleLoad.setHorizontalTextPosition(SwingConstants.LEFT);
+		panel3.add(scaleParameterFilepath = new JTextField(50));
+		panel3.add(resetScale = new JButton("Reset"));
+		
+		//Combining the subpanels
+		panel.add(panel1);
+		panel.add(panel2);
+		panel.add(panel3);
+		
+		//parent.add(panel);
+		return panel;
+	}
+	
 	/**
 	 * Adds combination of the SVM setting panel and the panel with the 
 	 * restrictions and help button.
 	 * 
 	 * @param parent JPanel to contain the JPanel constructed.
+	 * @return 
 	 */
-	private void addCombinationSettingHelp(JPanel parent) {
+	private JPanel addCombinationSettingHelp(JPanel parent) {
 		JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		
         addOptions(panel);
         addRestrictionsHelp(panel);
         
-        parent.add(panel);
+        return panel;
 	}
 	
 	/**

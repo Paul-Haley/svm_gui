@@ -200,8 +200,7 @@ public class LearningController {
      */
     private class PredictButtonActionListener implements ActionListener {
     	/**
-    	 * Attempts to run the predict program after reading the user provided 
-    	 * settings.
+    	 * Run the predict program after reading the user provided settings.
     	 */
     	public void actionPerformed(ActionEvent e) {
     		model.predict(view.getPredictProbability(), view.getDataFilepath(), 
