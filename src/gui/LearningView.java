@@ -18,7 +18,7 @@ public class LearningView extends JFrame {
 	private LearningModel model;
 	
 	/*
-	 * Creates selection box used to select options applied.
+	 * Creates selection box used to select options applied for training.
 	 */
 	private String[] svmTypes = {"0 -- C-SVC (multi-class classification)", 
 			"1 -- nu-SVC (multi-class classification)", "2 -- one-class SVM", 
@@ -28,18 +28,18 @@ public class LearningView extends JFrame {
 			"2 -- radial basis function: exp(-gamma*|u-v|^2)\n",
 			"3 -- sigmoid: tanh(gamma*u'*v + coef0)\n",
 			"4 -- precomputed kernel (kernel values in training_set_file)\n"};
-	private String[] yesNo = {"No", "Yes"};
-    private JComboBox<String> svmType, kernelType, shrinking, 
-    		probabilityEstimates;
+    private JComboBox<String> svmType, kernelType;
+    private JCheckBox shrinking, probabilityEstimates;
     private JTextField degree, gamma, coef0, cost, nu, epsilonLoss, cacheSize, 
     		epsilonTolerance, weight, crossValidation;
     
     /*
      * Inputs and Outputs
      */
-    private JTextField dataFilepath, modelFilepath;
+    private JTextField dataFilepath, modelFilepath, outputFilepath;
     private JTextArea dialog;
     private JButton scale, train, predict, help, reset;
+    private JCheckBox predictProbability;
     
     /**
      * Creates a new svm_gui window.
@@ -79,27 +79,31 @@ public class LearningView extends JFrame {
 		
         //Adds the highest level JPanel to the container.
         container.add(panel,"North");
+        resetOptions(); //Refreshes the options to grey boxes required.
 	}
 	
 	/**
-	 * Adds the data filepath selector.
+	 * Adds the data, model and output filepath selector.
 	 * 
 	 * @param parent JPanel to contain the JPanel constructed.
 	 */
 	private void addFileSelector(JPanel parent) {
-		//Creates a new JPanel for labels with a 2 by 1 grid.
+		//Creates a new JPanel for labels with a 3 by 1 grid.
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(2,1));
+        panel.setLayout(new GridLayout(3,1));
         
         // Two sub panels using FlowLayout will be used for scaling.
         JPanel panel1 = new JPanel();
         panel1.setLayout(new FlowLayout(FlowLayout.LEADING));
         JPanel panel2 = new JPanel();
         panel2.setLayout(new FlowLayout(FlowLayout.LEADING));
+        JPanel panel3 = new JPanel();
+        panel3.setLayout(new FlowLayout(FlowLayout.LEADING));
         
-        // Implementing data and model TextFields
+        // Implementing data, model and output TextFields
         dataFilepath = new JTextField(50);
         modelFilepath = new JTextField(50);
+        outputFilepath = new JTextField(50);
         
         //TODO: Use an actual file selector.
         panel1.add(new JLabel("Data file to use:"));
@@ -108,9 +112,14 @@ public class LearningView extends JFrame {
         panel2.add(new JLabel("Model file to use:"));
         panel2.add(modelFilepath);
         
+        panel3.add(new JLabel("Output file to write:"));
+        panel3.add(outputFilepath);
+        panel3.add(new JLabel("(Predict only)"));
+        
         // Combining the two sub panels into the main panel.
         panel.add(panel1);
         panel.add(panel2);
+        panel.add(panel3);
         
         parent.add(panel);
 	}
@@ -161,11 +170,12 @@ public class LearningView extends JFrame {
         // Setting up drop downboxes
         svmType = new JComboBox<String>(svmTypes);
         kernelType = new JComboBox<String>(kernelTypes);
-        shrinking = new JComboBox<String>(yesNo);
-        probabilityEstimates = new JComboBox<String>(yesNo);
+        shrinking = new JCheckBox("Shrinking");
+        shrinking.setHorizontalTextPosition(SwingConstants.LEFT);
+        probabilityEstimates = new JCheckBox("Probability Estimate");
+        probabilityEstimates.setHorizontalTextPosition(SwingConstants.LEFT);
         
         //TODO: Put tooltips for each textfield.
-        //TODO: Grey out unrelated fields.
         
         // First row
         panel1.add(new JLabel("SVM type:"));
@@ -209,10 +219,8 @@ public class LearningView extends JFrame {
         panel3.add(weight);
         
         //Fourth row
-        panel4.add(new JLabel("Enable shrinking?"));
         panel4.add(shrinking);
         
-        panel4.add(new JLabel("Train for probability estimates?"));
         panel4.add(probabilityEstimates);
         
         panel4.add(new JLabel("n-fold cross validation:"));
@@ -222,6 +230,9 @@ public class LearningView extends JFrame {
         panel4.add(new JLabel("Cache memory in MB:"));
         cacheSize = new JTextField(4);
         panel4.add(cacheSize);
+        
+        // Add the help and reset button.
+        addResetHelp(panel4);
 		
         panel.add(panel1);
         panel.add(panel2);
@@ -235,7 +246,10 @@ public class LearningView extends JFrame {
 	}
 	
 	/**
-	 * Adds accompanying instructions, along with, help and reset buttons.
+	 * Adds accompanying instructions.
+	 * 
+	 * This method no longer adds the help and reset buttons, this 
+	 * functionality is now in the addOptions() method.
 	 * 
 	 * @param parent JPanel to contain the JPanel constructed.
 	 */
@@ -257,7 +271,6 @@ public class LearningView extends JFrame {
         
         //Building panel1 with restrictions text and the reset and help buttons.
         panel.add(restrictions);
-        addResetHelp(panel1);
         addModes(panel1);
         
         panel.add(panel1);
@@ -275,13 +288,13 @@ public class LearningView extends JFrame {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 		
+		// Label and add the reset button
+        reset = new JButton("Reset");
+        panel.add(reset);
+		
 		// Label and add the help button
 		help = new JButton("Help");
         panel.add(help);
-        
-        // Label and add the reset button
-        reset = new JButton("Reset");
-        panel.add(reset);
         
 		parent.add(panel);
 	}
@@ -300,10 +313,14 @@ public class LearningView extends JFrame {
         scale = new JButton("Scale");
         train = new JButton("Train");
         predict = new JButton("Predict");
+        predictProbability = new JCheckBox("Predict probability estimates?");
+        predictProbability.setSelected(false);
+        predictProbability.setHorizontalTextPosition(SwingConstants.LEFT);
         
         panel.add(scale);
         panel.add(train);
         panel.add(predict);
+        panel.add(predictProbability);
         
         parent.add(panel);
 	}
@@ -350,8 +367,8 @@ public class LearningView extends JFrame {
 		//TODO: Make variables to store these values if needed again.
 		svmType.setSelectedIndex(0);
 		kernelType.setSelectedIndex(2);
-        shrinking.setSelectedIndex(1);
-        probabilityEstimates.setSelectedIndex(0);
+        shrinking.setSelected(true);
+        probabilityEstimates.setSelected(false);
         
         degree.setText("3");
         coef0.setText("0");
@@ -519,6 +536,10 @@ public class LearningView extends JFrame {
     	return modelFilepath.getText();
     }
     
+    public String getOutputFilepath() {
+    	return outputFilepath.getText();
+    }
+    
     public int getSvmType() {
     	return svmType.getSelectedIndex();
     }
@@ -651,11 +672,15 @@ public class LearningView extends JFrame {
     	}
     }
     
-    public int getShrinking() {
-    	return shrinking.getSelectedIndex();
+    public boolean getShrinking() {
+    	return shrinking.isSelected();
     }
     
-    public int getProbability() {
-    	return probabilityEstimates.getSelectedIndex();
+    public boolean getProbability() {
+    	return probabilityEstimates.isSelected();
+    }
+    
+    public boolean getPredictProbability() {
+    	return predictProbability.isSelected();
     }
 }

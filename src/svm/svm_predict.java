@@ -119,16 +119,16 @@ public class svm_predict {
 				 "% ("+correct+"/"+total+") (classification)\n");
 	}
 
-	private static void exit_with_help()
+	private static void exit_with_help() throws Exception
 	{
 		System.err.print("usage: svm_predict [options] test_file model_file output_file\n"
 		+"options:\n"
 		+"-b probability_estimates: whether to predict probability estimates, 0 or 1 (default 0); one-class SVM not supported yet\n"
 		+"-q : quiet mode (no outputs)\n");
-		System.exit(1);
+		throw new Exception();
 	}
 
-	public static void main(String argv[]) throws IOException
+	public static void main(String argv[]) throws Exception
 	{
 		int i, predict_probability=0;
         	svm_print_string = svm_print_stdout;
@@ -162,14 +162,18 @@ public class svm_predict {
 			if (model == null)
 			{
 				System.err.print("can't open model file "+argv[i+1]+"\n");
-				System.exit(1);
+				input.close();
+				output.close();
+				throw new Exception();
 			}
 			if(predict_probability == 1)
 			{
 				if(svm.svm_check_probability_model(model)==0)
 				{
 					System.err.print("Model does not support probabiliy estimates\n");
-					System.exit(1);
+					input.close();
+					output.close();
+					throw new Exception();
 				}
 			}
 			else

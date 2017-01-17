@@ -186,8 +186,8 @@ public class LearningController {
     		//parameter.weight = view.getWeight();
     		parameter.nu = view.getNu();
     		parameter.p = view.getEpsilonLoss();
-    		parameter.shrinking = view.getShrinking();
-    		parameter.probability = view.getProbability();
+    		parameter.shrinking = view.getShrinking()?1:0;
+    		parameter.probability = view.getProbability()?1:0;
     		
     		// Passing the parameter to the model
     		model.train(parameter, view.getCrossValidation(), 
@@ -204,7 +204,8 @@ public class LearningController {
     	 * settings.
     	 */
     	public void actionPerformed(ActionEvent e) {
-    		
+    		model.predict(view.getPredictProbability(), view.getDataFilepath(), 
+    				view.getModelFilepath(), view.getOutputFilepath());
     	}
     }
 }

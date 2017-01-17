@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.*;
 
 import libsvm.svm_parameter;
+import svm.svm_predict;
 import svm.svm_train;
 
 /**
@@ -118,8 +119,27 @@ public class LearningModel {
 		return;
 	}
 	
-	public int predict() {
+	public void predict(boolean probabilityEstimates, String data, String model, 
+			String output) {
+		String[] argv = new String[5];
+		argv[0] = "-b";
+		argv[1] = probabilityEstimates?"1":"0";
+		argv[2] = data;
+		argv[3] = model;
+		argv[4] = output;
 		
-		return 1;
+		// Attempting to run LIBSVM predict.
+		System.out.println("\n*** Attempting to run prediction" 
+				+ (probabilityEstimates?"(probability estimates)":"") 
+				+ "***\n");
+		try {
+			svm_predict.main(argv);
+		} catch (IOException e) {
+			System.err.println("Error accessing specified file(s) or cannot "
+					+ "write output file");
+		} catch (Exception e) {
+			// Do nothing because this is to replace a system exit.
+		}
+		return;
 	}	
 }
