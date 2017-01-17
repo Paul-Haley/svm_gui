@@ -17,12 +17,17 @@ public class LearningController {
 		this.model = model;
 		
 		// ComboBoxes
-		view.svmSelectorListener(new svmTypeSelector());
-		view.kernelSelectorListener(new kernelTypeSelector());	
+		view.svmSelectorListener(new SvmTypeSelector());
+		view.kernelSelectorListener(new KernelTypeSelector());	
+		
+		// CheckBoxes
+		view.scaleSaveListener(new ScaleSaveActionListener());
+		view.scaleLoadListener(new ScaleLoadActionListener());
 		
 		// Buttons
 		view.helpListener(new HelpButtonActionListener());
 		view.resetListener(new ResetButtonActionListener());
+		view.resetScaleListener(new ResetScaleButtonActionListener());
 		view.scaleListener(new ScaleButtonActionListener());
 		view.trainListener(new TrainButtonActionListener());
 		view.predictListener(new PredictButtonActionListener());
@@ -31,7 +36,7 @@ public class LearningController {
 	/**
 	 * Class for handling SVM type selections.
 	 */
-	private class svmTypeSelector implements ActionListener {
+	private class SvmTypeSelector implements ActionListener {
 		/**
 		 * When an SVM type is selected, unrelated options will be greyed out.
 		 * 
@@ -88,7 +93,7 @@ public class LearningController {
 	/**
 	 * Class for handling kernel type selections.
 	 */
-	private class kernelTypeSelector implements ActionListener {
+	private class KernelTypeSelector implements ActionListener {
 		/**
 		 * When an kernel type is selected, unrelated options will be greyed out.
 		 * 
@@ -121,6 +126,34 @@ public class LearningController {
 	}
 	
 	/**
+	 * Class for handling saving checkbox selections.
+	 */
+	private class ScaleSaveActionListener implements ActionListener {
+		/**
+		 * When scale save is selected, scale load will be unticked.
+		 */
+		public void actionPerformed(ActionEvent e) {
+			if (view.getScaleSave()) {
+				view.setScaleLoad(false);
+			}
+		}
+	}
+	
+	/**
+	 * Class for handling load checkbox selections.
+	 */
+	private class ScaleLoadActionListener implements ActionListener {
+		/**
+		 * When scale load is selected, scale save will be unticked.
+		 */
+		public void actionPerformed(ActionEvent e) {
+			if (view.getScaleLoad()) {
+				view.setScaleSave(false);
+			}
+		}
+	}
+	
+	/**
      * This class listens to the button used to bring up help.
      */
     private class HelpButtonActionListener implements ActionListener {
@@ -142,6 +175,19 @@ public class LearningController {
     	 */
     	public void actionPerformed(ActionEvent e) {
     		view.resetOptions();
+    	}
+    }
+    
+    /**
+     * This class listens to the scale tab reset button to reset all training 
+     * options to default.
+     */
+    private class ResetScaleButtonActionListener implements ActionListener {
+    	/**
+    	 * Resets all training options to their defaults.
+    	 */
+    	public void actionPerformed(ActionEvent e) {
+    		view.resetScale();
     	}
     }
     

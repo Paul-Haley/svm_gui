@@ -44,8 +44,7 @@ public class LearningView extends JFrame {
     /*
      * Scale components.
      */
-    private JTextField scaleParameterFilepath, scaleDataFilePath, xLower, 
-    		xUpper, yLower, yUpper;
+    private JTextField scaleParameterFilepath, xLower, xUpper, yLower, yUpper;
     private JButton resetScale;
     private JCheckBox scaleSave, scaleLoad;
     private JTabbedPane tabbedPane;
@@ -60,7 +59,7 @@ public class LearningView extends JFrame {
         
         //Creates container for interface setting title, size and close action.
         setTitle("svm_gui");
-        setBounds(400, 200, 900, 550);
+        setBounds(200, 200, 950, 650);
         setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         Container container = getContentPane();
@@ -83,13 +82,13 @@ public class LearningView extends JFrame {
         
         //Adds all interface components to the JPanel.
 		addFileSelector(panel);
-		//addCombinationSettingHelp(panel);
 		addScaleTrainTabs(panel);
 		addDialog(panel);
 		
         //Adds the highest level JPanel to the container.
         container.add(panel,"North");
         resetOptions(); //Refreshes the options to grey boxes required.
+        resetScale();
 	}
 	
 	/**
@@ -121,6 +120,7 @@ public class LearningView extends JFrame {
         
         panel2.add(new JLabel("Model file to use:"));
         panel2.add(modelFilepath);
+        panel2.add(new JLabel("(Train and Predict only)"));
         
         panel3.add(new JLabel("Output file to write:"));
         panel3.add(outputFilepath);
@@ -134,16 +134,26 @@ public class LearningView extends JFrame {
         parent.add(panel);
 	}
 	
+	/**
+	 * Implements the tabbing functionality of the interface by combing the 
+	 * scaling and training/prediction panels (components).
+	 * 
+	 * @param parent JPanel to contain the JPanel constructed.
+	 */
 	private void addScaleTrainTabs(JPanel parent) {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(1, 1));
 		tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("Train & Predict", addCombinationSettingHelp(panel));
-		tabbedPane.addTab("Scale Data", addScaleSettings(panel));
+		tabbedPane.addTab("Train & Predict", addCombinationSettingHelp());
+		tabbedPane.addTab("Scale Data", addScaleSettings());
 		parent.add(tabbedPane);
 	}
 	
-	private JPanel addScaleSettings(JPanel parent) {
+	/**
+	 * 
+	 * @return the scale settings panel with all components.
+	 */
+	private JPanel addScaleSettings() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		
@@ -169,8 +179,9 @@ public class LearningView extends JFrame {
 		scaleSave.setHorizontalTextPosition(SwingConstants.LEFT);
 		panel3.add(scaleLoad = new JCheckBox("Load scaling parameter?"));
 		scaleLoad.setHorizontalTextPosition(SwingConstants.LEFT);
-		panel3.add(scaleParameterFilepath = new JTextField(50));
 		panel3.add(resetScale = new JButton("Reset"));
+		panel3.add(scaleParameterFilepath = new JTextField(50));
+		panel3.add(scale = new JButton("Scale"));
 		
 		//Combining the subpanels
 		panel.add(panel1);
@@ -185,10 +196,9 @@ public class LearningView extends JFrame {
 	 * Adds combination of the SVM setting panel and the panel with the 
 	 * restrictions and help button.
 	 * 
-	 * @param parent JPanel to contain the JPanel constructed.
-	 * @return 
+	 * @return the panel with all components
 	 */
-	private JPanel addCombinationSettingHelp(JPanel parent) {
+	private JPanel addCombinationSettingHelp() {
 		JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		
@@ -368,14 +378,12 @@ public class LearningView extends JFrame {
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         
         // Implement buttons and set text
-        scale = new JButton("Scale");
         train = new JButton("Train");
         predict = new JButton("Predict");
         predictProbability = new JCheckBox("Predict probability estimates?");
         predictProbability.setSelected(false);
         predictProbability.setHorizontalTextPosition(SwingConstants.LEFT);
         
-        panel.add(scale);
         panel.add(train);
         panel.add(predict);
         panel.add(predictProbability);
@@ -443,6 +451,20 @@ public class LearningView extends JFrame {
 	}
 	
 	/**
+	 * Resets all settings in the scale tab.
+	 */
+	public void resetScale() {
+		xLower.setText("-1");
+		xUpper.setText("1");
+		yLower.setText("");
+		yUpper.setText("");
+		
+		scaleSave.setSelected(false);
+		scaleLoad.setSelected(false);
+		return;
+	}
+	
+	/**
      * Allows for the SVM type selectors selection to trigger actions. Sets up 
      * an 
      * ActionListener with the passed in one.
@@ -482,6 +504,17 @@ public class LearningView extends JFrame {
     public void resetListener(ActionListener p1) {
         reset.addActionListener(p1);
     }
+    
+    /**
+     * Allows for the reset button in the scale tab to trigger actions. Sets up 
+     * an ActionListener with the passed in one.
+     * 
+     * @param p1 Given ActionListener for monitoring.
+     */
+    public void resetScaleListener(ActionListener p1) {
+        resetScale.addActionListener(p1);
+    }
+    
     /**
      * Allows for the scale button to trigger actions. Sets up an 
      * ActionListener with the passed in one.
@@ -490,6 +523,26 @@ public class LearningView extends JFrame {
      */
     public void scaleListener(ActionListener p1) {
         scale.addActionListener(p1);
+    }
+    
+    /**
+     * Allows for the scale save button to trigger actions. Sets up an 
+     * ActionListener with the passed in one.
+     * 
+     * @param p1 Given ActionListener for monitoring.
+     */
+    public void scaleSaveListener(ActionListener p1) {
+        scaleSave.addActionListener(p1);
+    }
+    
+    /**
+     * Allows for the scale load button to trigger actions. Sets up an 
+     * ActionListener with the passed in one.
+     * 
+     * @param p1 Given ActionListener for monitoring.
+     */
+    public void scaleLoadListener(ActionListener p1) {
+        scaleLoad.addActionListener(p1);
     }
     
     /**
@@ -596,6 +649,10 @@ public class LearningView extends JFrame {
     
     public String getOutputFilepath() {
     	return outputFilepath.getText();
+    }
+    
+    public String getScaleParameterFilepath() {
+    	return scaleParameterFilepath.getText();
     }
     
     public int getSvmType() {
@@ -740,5 +797,21 @@ public class LearningView extends JFrame {
     
     public boolean getPredictProbability() {
     	return predictProbability.isSelected();
+    }
+    
+    public boolean getScaleSave() {
+    	return scaleSave.isSelected();
+    }
+    
+    public void setScaleSave(boolean b) {
+    	scaleSave.setSelected(b);
+    }
+    
+    public boolean getScaleLoad() {
+    	return scaleLoad.isSelected();
+    }
+    
+    public void setScaleLoad(boolean b) {
+    	scaleLoad.setSelected(b);
     }
 }
