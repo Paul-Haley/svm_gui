@@ -98,22 +98,20 @@ public class LearningModel {
 		// Number of arguments to be passed to training call.
 		int argc = commands.size();
 		String[] argv = new String[argc];
-		for (int i = 0; i < argc; ++i) {
+		for (int i = 0; i < argc; ++i) { // Adding commands to array.
 			argv[i] = commands.elementAt(i);
 		}
-		//String[] argv = (String[]) commands.toArray(); // Casting to a String array
-		//TODO: remove this line below
-		System.out.println(argv.toString());
 		
 		/*
 		 * Attempting to run LIBSVM train. Beyond exceptions all results will 
 		 * appear in the JTextArea (dialog). 
 		 */
+		System.out.println("\n*** Attempting to run training ***\n");
 		try {
 			svm_train.main(argv);
 		} catch (IOException e) {
-			System.err.println("Error accessing specified file or cannot write "
-					+ "model file");
+			System.err.println("Error accessing specified file(s) or cannot "
+					+ "write model file");
 		} catch (Exception e) {
 			// Do nothing because this is to replace a system exit.
 		}
@@ -123,7 +121,5 @@ public class LearningModel {
 	public int predict() {
 		
 		return 1;
-	}
-	
-	
+	}	
 }

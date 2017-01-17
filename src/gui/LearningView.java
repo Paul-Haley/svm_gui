@@ -183,7 +183,7 @@ public class LearningView extends JFrame {
         gamma = new JTextField(5);
         panel2.add(gamma);
         
-        panel2.add(new JLabel("coef0 in kernel Function"));
+        panel2.add(new JLabel("coef0 in kernel function:"));
         coef0= new JTextField(5);
         panel2.add(coef0);
         
