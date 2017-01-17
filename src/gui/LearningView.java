@@ -44,7 +44,8 @@ public class LearningView extends JFrame {
     /*
      * Scale components.
      */
-    private JTextField scaleParameterFilepath, xLower, xUpper, yLower, yUpper;
+    private JTextField scaleParameterFilepath, scaledDataFilepath, xLower, 
+    		xUpper, yLower, yUpper;
     private JButton resetScale;
     private JCheckBox scaleSave, scaleLoad;
     private JTabbedPane tabbedPane;
@@ -164,6 +165,10 @@ public class LearningView extends JFrame {
 		panel2.setLayout(new FlowLayout(FlowLayout.LEADING));
 		JPanel panel3 = new JPanel();
 		panel3.setLayout(new FlowLayout(FlowLayout.LEADING));
+		JPanel panel4 = new JPanel();
+		panel4.setLayout(new FlowLayout(FlowLayout.LEADING));
+		JPanel panel5 = new JPanel();
+		panel5.setLayout(new FlowLayout(FlowLayout.LEADING));
 		
 		panel1.add(new JLabel("x scaling lower limit:"));
 		panel1.add(xLower = new JTextField(3));
@@ -180,13 +185,20 @@ public class LearningView extends JFrame {
 		panel3.add(scaleLoad = new JCheckBox("Load scaling parameter?"));
 		scaleLoad.setHorizontalTextPosition(SwingConstants.LEFT);
 		panel3.add(resetScale = new JButton("Reset"));
-		panel3.add(scaleParameterFilepath = new JTextField(50));
-		panel3.add(scale = new JButton("Scale"));
+		
+		panel4.add(new JLabel("Scale parameter filepath:"));
+		panel4.add(scaleParameterFilepath = new JTextField(50));
+		
+		panel5.add(new JLabel("Scaled data filepath:"));
+		panel5.add(scaledDataFilepath = new JTextField(50));
+		panel5.add(scale = new JButton("Scale"));
 		
 		//Combining the subpanels
 		panel.add(panel1);
 		panel.add(panel2);
 		panel.add(panel3);
+		panel.add(panel4);
+		panel.add(panel5);
 		
 		//parent.add(panel);
 		return panel;
@@ -655,6 +667,15 @@ public class LearningView extends JFrame {
     	return scaleParameterFilepath.getText();
     }
     
+    public void geryScaleParameterFilepath(boolean b) {
+    	scaleParameterFilepath.setEditable(!b);
+    	scaleParameterFilepath.setForeground(b?Color.GRAY:Color.BLACK);
+    }
+    
+    public String getScaledDataFilepath() {
+    	return scaledDataFilepath.getText();
+    }
+    
     public int getSvmType() {
     	return svmType.getSelectedIndex();
     }
@@ -797,6 +818,30 @@ public class LearningView extends JFrame {
     
     public boolean getPredictProbability() {
     	return predictProbability.isSelected();
+    }
+    
+    public double getXLower() throws NumberFormatException {
+    	return Double.parseDouble(xLower.getText());
+    }
+
+    public double getXUpper() throws NumberFormatException {
+    	return Double.parseDouble(xUpper.getText());
+    }
+    
+    public double getYLower() {
+    	try {
+    		return Double.parseDouble(yLower.getText());
+    	} catch (NumberFormatException e) {
+    		return 0.0;
+    	}
+    }
+    
+    public double getYUpper() {
+    	try {
+    		return Double.parseDouble(yUpper.getText());
+    	} catch (NumberFormatException e) {
+    		return 0.0;
+    	}
     }
     
     public boolean getScaleSave() {

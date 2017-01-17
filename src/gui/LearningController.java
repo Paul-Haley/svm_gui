@@ -135,6 +135,9 @@ public class LearningController {
 		public void actionPerformed(ActionEvent e) {
 			if (view.getScaleSave()) {
 				view.setScaleLoad(false);
+				view.geryScaleParameterFilepath(false);
+			} else if (!view.getScaleLoad()) {
+				view.geryScaleParameterFilepath(true);
 			}
 		}
 	}
@@ -149,6 +152,9 @@ public class LearningController {
 		public void actionPerformed(ActionEvent e) {
 			if (view.getScaleLoad()) {
 				view.setScaleSave(false);
+				view.geryScaleParameterFilepath(false);
+			} else if (!view.getScaleSave()) {
+				view.geryScaleParameterFilepath(true);
 			}
 		}
 	}
@@ -200,7 +206,14 @@ public class LearningController {
     	 * settings.
     	 */
     	public void actionPerformed(ActionEvent e) {
+    		// Calculating the mode value, 0 nothing, 1 save, 2 load.
+    		int mode = (view.getScaleSave()?1:0) + (view.getScaleLoad()?2:0);
     		
+    		// Call scaling. TODO: error checking
+    		model.scale(mode, view.getScaleParameterFilepath(), 
+    				view.getDataFilepath(), view.getScaledDataFilepath(), 
+    				view.getXLower(), view.getXUpper(), 
+    				view.getYLower(), view.getYUpper());
     	}
     }
     

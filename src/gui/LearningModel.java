@@ -5,6 +5,7 @@ import java.util.*;
 
 import libsvm.svm_parameter;
 import svm.svm_predict;
+import svm.svm_scale;
 import svm.svm_train;
 
 /**
@@ -26,13 +27,92 @@ public class LearningModel {
 	 * Constructor for model component of the svm_gui.
 	 */
 	public LearningModel() {
-		
 		return;
 	}
 	
-	public int scale() {
+	/**
+	 * Attempts to apply scaling to the given data file and output the scaled 
+	 * data to the filepath specified. These parameters can be specified and 
+	 * saved or loaded from a user specified file.
+	 * 
+	 * If yLower == yUpper == 0, then there will be no y scaling.
+	 * 
+	 * Mode meanings:
+	 * mode == 0 => do nothing additional with parameters.
+	 * mode == 1 => save parameters to scaleParameterFilepath.
+	 * mode == 2 => load parameters from scaleParameterFilepath and apply. This 
+	 * 		option will ignore all x and y bounds given.
+	 * 
+	 * @param mode whether to save, load or do nothing additional with 
+	 * 		parameters
+	 * @param scaleParameterFilepath file to save or load scaling parameters
+	 * @param dataFilepath datafile to read for scaling
+	 * @param scaledDataFilepath output file of scaled data
+	 * @param xLower lower limit x
+	 * @param xUpper upper limit x
+	 * @param yLower lower limit y
+	 * @param yUpper upper limit y
+	 * 
+	 * @require 0 <= mode <= 2 &&
+	 * (scaleParameterFilepath != null <=>  mode == 0) &&
+	 * dataFilepath != null &&
+	 * scaledDataFilepath != null &&
+	 * ((xLower < xUpper && yLower < yUpper) || yLower == yUpper == 0) 
+	 */
+	public void scale(int mode, String scaleParameterFilepath, 
+			String dataFilepath, String scaledDataFilepath, 
+			double xLower, double xUpper, double yLower, double yUpper) {
+		// Pushing the arguments to a stack as the number of them is unknown
+		Stack<String> commands = new Stack<String>();
 		
-		return 1;
+		// Pushing x lower and upper limits
+		commands.push("-l");
+		commands.push(String.valueOf(xLower));
+		commands.push("-u");
+		commands.push(String.valueOf(xUpper));
+		
+		if (!(yLower == 0.0 && yUpper == 0.0)) {
+			commands.push("-y");
+			commands.push(String.valueOf(yLower));
+			commands.push(String.valueOf(yUpper));
+		}
+		
+		switch (mode) {
+			case 1:
+				commands.push("-s");
+				commands.push(scaleParameterFilepath);
+				break;
+			case 2:
+				commands.push("-r");
+				commands.push(scaleParameterFilepath);
+				break;
+			default:
+				break; // Assume mode 0, no saving or loading.
+		}
+		
+		// Pushing data filepath and scaled out filepath
+		commands.push(dataFilepath);
+		commands.push(scaledDataFilepath);
+		
+		System.out.println(commands.toString());
+		
+		// Number of arguments to be passed to training call.
+		int argc = commands.size();
+		String[] argv = new String[argc];
+		for (int i = 0; i < argc; ++i) { // Adding commands to array.
+			argv[i] = commands.elementAt(i);
+		}
+		
+		// Attempts to call LIBSVM scale with parameters given.
+		try {
+			svm_scale.main(argv);
+		} catch (IOException e) {
+			System.err.println("Error accessing specified file(s) or cannot "
+					+ "write output file");
+		} catch (Exception e) {
+			// Do nothing because this is to replace a system exit.
+		}
+		return;
 	}
 	
 	/**
