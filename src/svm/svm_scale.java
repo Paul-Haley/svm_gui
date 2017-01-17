@@ -20,10 +20,10 @@ public class svm_scale
 	private long num_nonzeros = 0;
 	private long new_num_nonzeros = 0;
 
-	private static void exit_with_help()
+	private static void exit_with_help() throws Exception
 	{
 		System.out.print(
-		 "Usage: svm-scale [options] data_filename\n"
+		 "Usage: svm-scale [options] data_filename scaled_data_filename\n"
 		+"options:\n"
 		+"-l lower : x scaling lower limit (default -1)\n"
 		+"-u upper : x scaling upper limit (default +1)\n"
@@ -31,7 +31,7 @@ public class svm_scale
 		+"-s save_filename : save scaling parameters to save_filename\n"
 		+"-r restore_filename : restore scaling parameters from restore_filename\n"
 		);
-		System.exit(1);
+		throw new Exception();
 	}
 
 	private BufferedReader rewind(BufferedReader fp, String filename) throws IOException
@@ -40,7 +40,7 @@ public class svm_scale
 		return new BufferedReader(new FileReader(filename));
 	}
 
-	private void output_target(double value)
+	private void output_target(double value, DataOutputStream scaledData)
 	{
 		if(y_scaling)
 		{
@@ -53,10 +53,15 @@ public class svm_scale
 				(value-y_min) / (y_max-y_min);
 		}
 
-		System.out.print(value + " ");
+		try {
+			scaledData.writeBytes(value + " ");
+		} catch (IOException e) {
+			System.err.print("Error writing to scaled data file!");
+		}
+		//System.out.print(value + " ");
 	}
 
-	private void output(int index, double value)
+	private void output(int index, double value, DataOutputStream scaledData)
 	{
 		/* skip single-valued attribute */
 		if(feature_max[index] == feature_min[index])
@@ -73,7 +78,12 @@ public class svm_scale
 
 		if(value != 0)
 		{
-			System.out.print(index + ":" + value + " ");
+			try {
+				scaledData.writeBytes(index + ":" + value + " ");
+			} catch (IOException e) {
+				System.err.print("Error writing to scaled data file!");
+			}
+			//System.out.print(index + ":" + value + " ");
 			new_num_nonzeros++;
 		}
 	}
@@ -84,16 +94,16 @@ public class svm_scale
 		return line;
 	}
 
-	private void run(String []argv) throws IOException
+	private void run(String []argv) throws Exception
 	{
 		int i,index;
 		BufferedReader fp = null, fp_restore = null;
 		String save_filename = null;
 		String restore_filename = null;
 		String data_filename = null;
-
-
-		for(i=0;i<argv.length;i++)
+		
+		// argv.length - 1 due to the extra argument for saving the scaled data
+		for(i=0; i<argv.length - 1; i++)
 		{
 			if (argv[i].charAt(0) != '-')	break;
 			++i;
@@ -118,23 +128,35 @@ public class svm_scale
 		if(!(upper > lower) || (y_scaling && !(y_upper > y_lower)))
 		{
 			System.err.println("inconsistent lower/upper specification");
-			System.exit(1);
+			throw new Exception();
 		}
 		if(restore_filename != null && save_filename != null)
 		{
 			System.err.println("cannot use -r and -s simultaneously");
-			System.exit(1);
+			throw new Exception();
 		}
 
-		if(argv.length != i+1)
+		if(argv.length != i+2) // Allows for the extra parameter for saving
 			exit_with_help();
 
-		data_filename = argv[i];
+		data_filename = argv[argv.length - 2]; // This was changed
 		try {
 			fp = new BufferedReader(new FileReader(data_filename));
 		} catch (Exception e) {
 			System.err.println("can't open file " + data_filename);
-			System.exit(1);
+			throw new Exception();
+		}
+		
+		// File to write scaled data
+		DataOutputStream scaledData;
+		try {
+			scaledData = new DataOutputStream(
+					new BufferedOutputStream(
+							new FileOutputStream(argv[argv.length])));
+		} catch (Exception e) {
+			System.err.println("can't open file " + data_filename);
+			fp.close();
+			throw new Exception();
 		}
 
 		/* assumption: min index of attributes is 1 */
@@ -150,7 +172,8 @@ public class svm_scale
 			}
 			catch (Exception e) {
 				System.err.println("can't open file " + restore_filename);
-				System.exit(1);
+				scaledData.close();
+				throw new Exception();
 			}
 			if((c = fp_restore.read()) == 'y')
 			{
@@ -189,7 +212,8 @@ public class svm_scale
 			feature_min = new double[(max_index+1)];
 		} catch(OutOfMemoryError e) {
 			System.err.println("can't allocate enough memory");
-			System.exit(1);
+			scaledData.close();
+			throw new Exception();
 		}
 
 		for(i=0;i<=max_index;i++)
@@ -290,7 +314,7 @@ public class svm_scale
 				fp_save = new BufferedWriter(new FileWriter(save_filename));
 			} catch(IOException e) {
 				System.err.println("can't open file " + save_filename);
-				System.exit(1);
+				throw new Exception();
 			}
 
 			if(y_scaling)
@@ -319,20 +343,26 @@ public class svm_scale
 
 			StringTokenizer st = new StringTokenizer(line," \t\n\r\f:");
 			target = Double.parseDouble(st.nextToken());
-			output_target(target);
+			output_target(target, scaledData);
 			while(st.hasMoreElements())
 			{
 				index = Integer.parseInt(st.nextToken());
 				value = Double.parseDouble(st.nextToken());
 				for (i = next_index; i<index; i++)
-					output(i, 0);
-				output(index, value);
+					output(i, 0, scaledData);
+				output(index, value, scaledData);
 				next_index = index + 1;
 			}
 
 			for(i=next_index;i<= max_index;i++)
-				output(i, 0);
-			System.out.print("\n");
+				output(i, 0, scaledData);
+			
+			try {
+				scaledData.writeBytes("\n");
+			} catch (IOException e) {
+				System.err.print("Error writing to scaled data file!");
+			}
+			//System.out.print("\n");
 		}
 		if (new_num_nonzeros > num_nonzeros)
 			System.err.print(
@@ -343,7 +373,13 @@ public class svm_scale
 		fp.close();
 	}
 
-	public static void main(String argv[]) throws IOException
+	/**
+	 * 
+	 * @param argv command line arguments
+	 * @throws Exception This is to replace system exit like what was done in 
+	 * 		svm_train
+	 */
+	public static void main(String argv[]) throws Exception
 	{
 		svm_scale s = new svm_scale();
 		s.run(argv);
