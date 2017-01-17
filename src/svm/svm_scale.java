@@ -152,9 +152,10 @@ public class svm_scale
 		try {
 			scaledData = new DataOutputStream(
 					new BufferedOutputStream(
-							new FileOutputStream(argv[argv.length])));
+							new FileOutputStream(argv[argv.length - 1])));
 		} catch (Exception e) {
 			System.err.println("can't open file " + data_filename);
+			e.printStackTrace();
 			fp.close();
 			throw new Exception();
 		}
