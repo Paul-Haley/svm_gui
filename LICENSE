@@ -1,8 +1,3 @@
-svm_gui utilises LIBSVM 3.22 Java implementation. svm_gui is 
-subject to the same conditions and disclaimer as are specified in 
-the original LIBSVM copyright notice.
-
-svm_gui:
 BSD 3-Clause License
 
 Copyright (c) 2017, Paul Haley
@@ -32,6 +27,10 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+svm_gui utilises LIBSVM 3.22 Java implementation. svm_gui is 
+subject to the same conditions and disclaimer as are specified in 
+the original LIBSVM copyright notice.
 
 LIBSVM:
 Copyright (c) 2000-2014 Chih-Chung Chang and Chih-Jen Lin
@@ -64,4 +63,3 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
 LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
